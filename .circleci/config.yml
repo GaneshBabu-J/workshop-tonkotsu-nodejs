@@ -15,6 +15,12 @@ workflows:
           filters:
             branches:
               ignore: master
+      - deploy_prod:
+          requires:
+              - test
+          filters:
+            branches:
+              only: deploybranch
 jobs:
   test:
     <<: *defaults  
@@ -47,6 +53,16 @@ jobs:
       - checkout
       - heroku/install
       - heroku/deploy-via-git:
+          app-name: $HEROKU_APP_NAME
+          force: true
+          
+  deploy_prod:
+    executor: heroku/default
+    steps:
+      - checkout
+      - heroku/install
+      - heroku/deploy-via-git:
+          app-name: $HEROKU_APP_NAME_PROD
           force: true
 
 
